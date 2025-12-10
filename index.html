@@ -3,88 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HormigasAIS - Demo Sound</title>
+  <title>HormigasAIS - Demo Sound Premium</title>
   <style>
     body { 
       font-family: Arial, sans-serif; 
       padding: 20px; 
       background: #f0f4f8;
-      text-align: center;
     }
     h1 { 
       color: #1a73e8; 
+      text-align: center;
     }
-    .logo {
-      max-width: 300px;  /* ancho máximo del logo */
-      height: auto;      /* mantener proporción */
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .logo:hover {
-      transform: scale(1.05);
-    }
-    .sound-button { 
-      margin: 5px; 
-      padding: 12px 24px; 
-      font-size: 16px; 
-      cursor: pointer; 
-      border: none; 
-      border-radius: 8px; 
-      background: linear-gradient(135deg, #1a73e8, #4285f4); 
-      color: white; 
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-    .sound-button:hover {
-      transform: scale(1.1) rotate(-2deg);
-      box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-    }
-    .sound-button:active {
-      transform: scale(0.95);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    #buttons-container {
+    .item-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 20px;
+    }
+    .premium-item {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      width: 200px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .premium-item img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
+    .download-btn {
+      margin-top: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      transition: 0.2s;
+    }
+    .download-btn:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
+  <h1>HormigasAIS - Premium</h1>
+  <p style="text-align:center;">Haz click en el botón para descargar tus archivos Premium:</p>
 
-  <!-- Logo clickeable que redirige al repositorio -->
-  <a href="https://github.com/HormigasAIS-ux" target="_blank">
-    <img src="images/20251210_111522_0000.png" alt="HormigasAIS Logo" class="logo">
-  </a>
-
-  <h1>HormigasAIS - Demo Sound</h1>
-  <p>Haz click para reproducir:</p>
-
-  <div id="buttons-container"></div>
+  <div id="premium-container" class="item-container"></div>
 
   <script>
-    const container = document.getElementById("buttons-container");
+    const container = document.getElementById("premium-container");
 
-    // Cargar sonidos desde sounds.json
-    fetch('sounds/sounds.json')
+    // Obtener lista de archivos Premium desde el backend
+    fetch('/premium/list')
       .then(response => response.json())
-      .then(sounds => {
-        if(sounds.length === 0){
-          container.textContent = "No se encontraron archivos WAV.";
+      .then(items => {
+        if(items.length === 0){
+          container.textContent = "No hay archivos Premium disponibles.";
+          return;
         }
 
-        sounds.forEach(sound => {
-          const btn = document.createElement("button");
-          btn.className = "sound-button";
-          btn.textContent = sound.replace(".wav", "").replace("_", " ");
-          btn.onclick = () => new Audio(`sounds/${sound}`).play();
-          container.appendChild(btn);
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'premium-item';
+
+          // Imagen o sonido
+          if(item.file_type.startsWith("image/")){
+            const img = document.createElement('img');
+            img.src = `/premium/download/${item.premium_id}`;
+            img.alt = item.original_filename;
+            div.appendChild(img);
+          } else {
+            const label = document.createElement('p');
+            label.textContent = item.original_filename;
+            div.appendChild(label);
+          }
+
+          // Botón de descarga
+          const btn = document.createElement('button');
+          btn.className = 'download-btn';
+          btn.textContent = 'Descargar Premium';
+          btn.onclick = () => window.location.href = `/premium/download/${item.premium_id}`;
+          div.appendChild(btn);
+
+          container.appendChild(div);
         });
       })
       .catch(err => {
-        console.error('Error cargando sonidos:', err);
-        container.textContent = "Error cargando sonidos.";
+        console.error('Error cargando Premium:', err);
+        container.textContent = "Error cargando archivos Premium.";
       });
   </script>
 </body>
