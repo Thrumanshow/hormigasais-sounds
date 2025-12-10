@@ -19,11 +19,22 @@
   <script>
     const container = document.getElementById("buttons-container");
 
-    // Cargar lista de sonidos desde sounds.json
-    fetch('sounds/sounds.json')
-      .then(response => response.json())
-      .then(sounds => {
-        sounds.forEach(sound => {
+    // Intentamos leer todos los archivos de la carpeta /sounds/
+    fetch('sounds/')
+      .then(response => response.text())
+      .then(html => {
+        // Buscar todos los .wav en el listado del servidor
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a'))
+          .map(a => a.getAttribute('href'))
+          .filter(href => href.endsWith('.wav'));
+
+        if(links.length === 0){
+          container.textContent = "No se encontraron archivos WAV en /sounds/";
+        }
+
+        links.forEach(sound => {
           const btn = document.createElement("button");
           btn.className = "sound-button";
           btn.textContent = sound.replace(".wav", "").replace("_", " ");
@@ -31,7 +42,10 @@
           container.appendChild(btn);
         });
       })
-      .catch(err => console.error('Error cargando sonidos:', err));
+      .catch(err => {
+        console.error('Error cargando sonidos:', err);
+        container.textContent = "Error cargando sonidos.";
+      });
   </script>
 </body>
 </html>
