@@ -1,0 +1,27 @@
+name: Update sounds.json
+
+on:
+  push:
+    paths:
+      - 'sounds/**'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate sounds.json
+        run: |
+          cd sounds
+          ls *.wav > sounds.txt
+          python3 -c "import json; files=open('sounds.txt').read().splitlines(); print(json.dumps(files, indent=2))" > sounds.json
+          rm sounds.txt
+
+      - name: Commit sounds.json
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "actions@github.com"
+          git add sounds/sounds.json
+          git commit -m "Actualizar sounds.json automáticamente" || echo "No changes"
+          git push
