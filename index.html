@@ -4,15 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HormigasAIS - Demo Sound</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #1a73e8; }
+    .sound-button { margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h1>HormigasAIS - Demo Sound creado con Furnace</h1>
-
+  <h1>HormigasAIS - Demo Sound</h1>
   <p>Haz click para reproducir:</p>
-  <audio controls>
-    <source src="sounds/demo.wav" type="audio/wav">
-    Tu navegador no soporta audio.
-  </audio>
 
+  <div id="buttons-container"></div>
+
+  <script>
+    const container = document.getElementById("buttons-container");
+
+    // Cargar lista de sonidos desde sounds.json
+    fetch('sounds/sounds.json')
+      .then(response => response.json())
+      .then(sounds => {
+        sounds.forEach(sound => {
+          const btn = document.createElement("button");
+          btn.className = "sound-button";
+          btn.textContent = sound.replace(".wav", "").replace("_", " ");
+          btn.onclick = () => new Audio(`sounds/${sound}`).play();
+          container.appendChild(btn);
+        });
+      })
+      .catch(err => console.error('Error cargando sonidos:', err));
+  </script>
 </body>
 </html>
