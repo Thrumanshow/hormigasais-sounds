@@ -14,15 +14,15 @@
   <h1>HormigasAIS - Demo Sound</h1>
   <p>Haz click para reproducir:</p>
 
-  <div id="buttons-container"></div>
+  <div id="buttons-container">Cargando sonidos...</div>
 
   <script>
     const container = document.getElementById("buttons-container");
 
-    // Cargar el listado de sonidos desde sounds.json
     fetch('sounds/sounds.json')
       .then(response => response.json())
       .then(sounds => {
+        container.innerHTML = '';
         sounds.forEach(sound => {
           const btn = document.createElement("button");
           btn.className = "sound-button";
@@ -33,7 +33,7 @@
       })
       .catch(err => {
         console.error('Error cargando sonidos:', err);
-        container.textContent = "Error cargando sonidos.";
+        container.textContent = "No se pudieron cargar los sonidos.";
       });
   </script>
 </body>
