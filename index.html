@@ -5,24 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HormigasAIS - Demo Sound</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { color: #1a73e8; }
-    .sound-button { margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      background: #f0f4f8;
+    }
+    h1 { 
+      color: #1a73e8; 
+      text-align: center;
+    }
+    .sound-button { 
+      margin: 5px; 
+      padding: 12px 24px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      border: none; 
+      border-radius: 8px; 
+      background: linear-gradient(135deg, #1a73e8, #4285f4); 
+      color: white; 
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .sound-button:hover {
+      transform: scale(1.1) rotate(-2deg);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+    }
+    .sound-button:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    #buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
   <h1>HormigasAIS - Demo Sound</h1>
-  <p>Haz click para reproducir:</p>
+  <p style="text-align:center;">Haz click para reproducir:</p>
 
-  <div id="buttons-container">Cargando sonidos...</div>
+  <div id="buttons-container"></div>
 
   <script>
     const container = document.getElementById("buttons-container");
 
+    // Cargar sonidos desde sounds.json
     fetch('sounds/sounds.json')
       .then(response => response.json())
       .then(sounds => {
-        container.innerHTML = '';
+        if(sounds.length === 0){
+          container.textContent = "No se encontraron archivos WAV.";
+        }
+
         sounds.forEach(sound => {
           const btn = document.createElement("button");
           btn.className = "sound-button";
@@ -33,7 +68,7 @@
       })
       .catch(err => {
         console.error('Error cargando sonidos:', err);
-        container.textContent = "No se pudieron cargar los sonidos.";
+        container.textContent = "Error cargando sonidos.";
       });
   </script>
 </body>
