@@ -1,0 +1,7 @@
+# Ignorar temporales de Furnace
+*.tmp
+*.bak
+
+# Otros temporales
+.DS_Store
+Thumbs.db
