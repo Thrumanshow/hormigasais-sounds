@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HormigasAIS - Demo Sound & Premium</title>
+  <title>HormigasAIS - Demo Sound</title>
   <style>
     body { 
       font-family: Arial, sans-serif; 
@@ -11,15 +11,19 @@
       background: #f0f4f8;
       text-align: center;
     }
-    h1, h2 { color: #1a73e8; }
+    h1 { 
+      color: #1a73e8; 
+    }
     .logo {
-      max-width: 300px;
-      height: auto;
+      max-width: 300px;  /* ancho máximo del logo */
+      height: auto;      /* mantener proporción */
       margin-bottom: 20px;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
-    .logo:hover { transform: scale(1.05); }
+    .logo:hover {
+      transform: scale(1.05);
+    }
     .sound-button { 
       margin: 5px; 
       padding: 12px 24px; 
@@ -40,47 +44,36 @@
       transform: scale(0.95);
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    #buttons-container, #premium-container {
+    #buttons-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      margin-top: 20px;
-    }
-    .premium-item { 
-      margin: 10px; 
-      border-radius: 6px; 
-      background: white; 
-      padding: 10px; 
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      width: 220px;
-    }
-    .premium-item img { max-width: 200px; border-radius: 6px; display:block; margin:auto; }
-    .premium-item button { 
-      padding:8px 16px; margin-top:5px; cursor:pointer; 
-      border-radius:6px; background:#1a73e8; color:white; border:none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Logo -->
+  <!-- Logo clickeable que redirige al repositorio -->
   <a href="https://github.com/HormigasAIS-ux" target="_blank">
     <img src="images/20251210_111522_0000.png" alt="HormigasAIS Logo" class="logo">
   </a>
 
   <h1>HormigasAIS - Demo Sound</h1>
   <p>Haz click para reproducir:</p>
+
   <div id="buttons-container"></div>
 
-  <h2>Archivos Premium</h2>
-  <div id="premium-container"></div>
-
   <script>
-    // --- Sonidos ---
     const container = document.getElementById("buttons-container");
+
+    // Cargar sonidos desde sounds.json
     fetch('sounds/sounds.json')
-      .then(res => res.json())
+      .then(response => response.json())
       .then(sounds => {
+        if(sounds.length === 0){
+          container.textContent = "No se encontraron archivos WAV.";
+        }
+
         sounds.forEach(sound => {
           const btn = document.createElement("button");
           btn.className = "sound-button";
@@ -88,6 +81,14 @@
           btn.onclick = () => new Audio(`sounds/${sound}`).play();
           container.appendChild(btn);
         });
+      })
+      .catch(err => {
+        console.error('Error cargando sonidos:', err);
+        container.textContent = "Error cargando sonidos.";
+      });
+  </script>
+</body>
+</html>
       })
       .catch(err => {
         container.textContent = "Error cargando sonidos.";
